@@ -27,7 +27,6 @@
         "cocos/Android.mk",
         "cocos/audio/android/Android.mk",
         "cocos/scripting/js-bindings/proj.android/Android.mk",
-        "cocos/editor-support/cocosbuilder/Android.mk",
         "extensions/Android.mk",
         "cocos/ui/Android.mk",
         "cocos/editor-support/cocostudio/Android.mk",
