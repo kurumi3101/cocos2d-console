@@ -29,7 +29,6 @@
         "cocos/scripting/js-bindings/proj.android/Android.mk",
         "extensions/Android.mk",
         "cocos/ui/Android.mk",
-        "cocos/editor-support/cocostudio/Android.mk",
         "cocos/network/Android.mk",
         "cocos/platform/android/Android.mk",
         "cocos/editor-support/dragonbones/proj.android/Android.mk",
