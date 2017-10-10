@@ -250,7 +250,8 @@ class SimulatorCompiler(cocos.CCPlugin):
         command = ' '.join([
             "mkdir -p %s" % (os.path.join(self.simulator_abs_path, "src")),
             " && %s" % cocos_cmd,
-            " && strip %s" % (os.path.join(self.simulator_output_dir,"mac/Simulator.app/Contents/MacOS/Simulator")),
+            # Don't strip executable file since Safari will not be able to detect JSContext for JSB project.
+            # " && strip %s" % (os.path.join(self.simulator_output_dir,"mac/Simulator.app/Contents/MacOS/Simulator")),
             ])
 
         self._run_cmd(command, self.simulator_abs_path)
