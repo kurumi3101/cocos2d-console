@@ -488,7 +488,7 @@ class CCPluginCompile(cocos.CCPlugin):
         builder.update_project(self._ap)
 
         if not self._project._is_script_project() or self._project._is_native_support():
-            if self._ndk_mode != "none":
+            if self._ndk_mode != "none" and not using_studio:
                 # build native code
                 cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_NATIVE'))
                 ndk_build_param = [
@@ -506,10 +506,7 @@ class CCPluginCompile(cocos.CCPlugin):
                 self._project.invoke_custom_step_script(cocos_project.Project.CUSTOM_STEP_PRE_NDK_BUILD, target_platform, args_ndk_copy)
 
                 modify_mk = False
-                if using_studio:
-                    app_mk = os.path.join(project_android_dir, "app/jni/Application.mk")
-                else:
-                    app_mk = os.path.join(project_android_dir, "jni/Application.mk")
+                app_mk = os.path.join(project_android_dir, "jni/Application.mk")
                 mk_content = None
                 if self.cppflags and os.path.exists(app_mk):
                     # record the content of Application.mk
