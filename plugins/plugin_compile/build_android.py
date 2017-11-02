@@ -560,17 +560,11 @@ class AndroidBuilder(object):
             project_name = self._xml_attr(self.app_android_root, 'build.xml', 'project', 'name')
             gen_apk_folder = os.path.join(self.app_android_root, 'bin')
 
-        # copy resources
-        self._copy_resources(custom_step_args, assets_dir)
-
-        # check the project config & compile the script files
-        if self._project._is_lua_project():
-            compile_obj.compile_lua_scripts(assets_dir, assets_dir)
-
-        if self._project._is_js_project():
-            compile_obj.compile_js_scripts(assets_dir, assets_dir)
-
         if not no_apk:
+            # remove old apk file
+            if os.path.isdir(gen_apk_folder):
+                shutil.rmtree(gen_apk_folder)
+
             # gather the sign info if necessary
             if build_mode == "release" and not self.has_keystore_in_signprops():
                 self._gather_sign_info()
@@ -585,6 +579,12 @@ class AndroidBuilder(object):
             if output_dir:
                 apk_name = '%s-%s.apk' % (project_name, build_mode)
                 gen_apk_path = os.path.join(gen_apk_folder, apk_name)
+
+                # Android Studio 2.x.x uses 'app/build/outputs/apk' as output directory,
+                # but Android Studio 3.x.x appends 'debug' or 'release' directory after 'app/build/outputs/apk'.
+                if not os.path.exists(gen_apk_path):
+                    gen_apk_path = os.path.join(gen_apk_folder, build_mode, apk_name)
+
                 if not os.path.exists(output_dir):
                     os.makedirs(output_dir)
                 shutil.copy(gen_apk_path, output_dir)
