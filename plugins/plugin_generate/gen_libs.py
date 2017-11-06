@@ -359,7 +359,7 @@ class LibsCompiler(cocos.CCPlugin):
         CONSOLE_PATH = "tools/cocos2d-console/bin"
         ANDROID_A_PATH = "frameworks/runtime-src/proj.android/obj/local"
         if self.use_studio is not None:
-            ANDROID_A_PATH = "frameworks/runtime-src/proj.android-studio/app/obj/local"
+            ANDROID_A_PATH = "frameworks/runtime-src/proj.android-studio/app/build/intermediates/ndkBuild/" + self.mode + "/obj/local"
 
         android_out_dir = os.path.join(self.lib_dir, "android")
         engine_dir = self.repo_x
@@ -373,7 +373,7 @@ class LibsCompiler(cocos.CCPlugin):
             python_path = 'python'
         else:
             python_path = os.path.join(python_path, 'python')
-        build_cmd = "\"%s\" \"%s\" compile -s %s -p android --ndk-mode %s --app-abi %s" % (python_path, cocos_py_path, proj_path, self.mode, self.app_abi)
+        build_cmd = "\"%s\" \"%s\" compile -s %s -p android --ndk-mode %s --app-abi %s -m %s" % (python_path, cocos_py_path, proj_path, self.mode, self.app_abi, self.mode)
         if self.android_platform is not None:
             build_cmd += ' --ap %s' % self.android_platform
         if self.use_studio is not None:
@@ -423,22 +423,30 @@ class LibsCompiler(cocos.CCPlugin):
                 strip_execute_name = "strip"
 
             # strip arm libs
-            strip_cmd_path = os.path.join(ndk_root, "toolchains/arm-linux-androideabi-4.8/prebuilt/%s/arm-linux-androideabi/bin/%s"
+            strip_cmd_path = os.path.join(ndk_root, "toolchains/arm-linux-androideabi-4.9/prebuilt/%s/arm-linux-androideabi/bin/%s"
                 % (sys_folder_name, strip_execute_name))
             if os.path.exists(strip_cmd_path):
                 armlibs = ["armeabi", "armeabi-v7a"]
                 for fold in armlibs:
                     self.trip_libs(strip_cmd_path, os.path.join(android_out_dir, fold))
+            else:
+                raise Exception("(%s) wasn't found." % strip_cmd_path)
 
             # strip arm64-v8a libs
             strip_cmd_path = os.path.join(ndk_root, "toolchains/aarch64-linux-android-4.9/prebuilt/%s/aarch64-linux-android/bin/%s" % (sys_folder_name, strip_execute_name))
-            if os.path.exists(strip_cmd_path) and os.path.exists(os.path.join(android_out_dir, "arm64-v8a")):
-                self.trip_libs(strip_cmd_path, os.path.join(android_out_dir, 'arm64-v8a'))
+            if os.path.exists(strip_cmd_path):
+                if os.path.exists(os.path.join(android_out_dir, "arm64-v8a")):
+                    self.trip_libs(strip_cmd_path, os.path.join(android_out_dir, 'arm64-v8a'))
+            else:
+                raise Exception("(%s) wasn't found." % strip_cmd_path)
 
             # strip x86 libs
-            strip_cmd_path = os.path.join(ndk_root, "toolchains/x86-4.8/prebuilt/%s/i686-linux-android/bin/%s" % (sys_folder_name, strip_execute_name))
-            if os.path.exists(strip_cmd_path) and os.path.exists(os.path.join(android_out_dir, "x86")):
-                self.trip_libs(strip_cmd_path, os.path.join(android_out_dir, 'x86'))
+            strip_cmd_path = os.path.join(ndk_root, "toolchains/x86-4.9/prebuilt/%s/i686-linux-android/bin/%s" % (sys_folder_name, strip_execute_name))
+            if os.path.exists(strip_cmd_path):
+                if os.path.exists(os.path.join(android_out_dir, "x86")):
+                    self.trip_libs(strip_cmd_path, os.path.join(android_out_dir, 'x86'))
+            else:
+                raise Exception("(%s) wasn't found." % strip_cmd_path)
 
     def trip_libs(self, strip_cmd, folder):
         if not os.path.isdir(folder):
