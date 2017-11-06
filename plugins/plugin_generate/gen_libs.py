@@ -407,7 +407,7 @@ class LibsCompiler(cocos.CCPlugin):
                 sys_folder_name = "windows"
                 for bit_str in check_bits:
                     check_folder_name = "windows%s" % bit_str
-                    check_path = os.path.join(ndk_root, "toolchains/arm-linux-androideabi-4.8/prebuilt/%s" % check_folder_name)
+                    check_path = os.path.join(ndk_root, "toolchains/arm-linux-androideabi-4.9/prebuilt/%s" % check_folder_name)
                     if os.path.isdir(check_path):
                         sys_folder_name = check_folder_name
                         break
