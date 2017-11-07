@@ -498,6 +498,8 @@ class AndroidBuilder(object):
             assets_dir = os.path.join(self.app_android_root, "assets")
             project_name = self._xml_attr(self.app_android_root, 'build.xml', 'project', 'name')
             gen_apk_folder = os.path.join(self.app_android_root, 'bin')
+            # copy resources
+            self._copy_resources(custom_step_args, assets_dir)
 
         if not no_apk:
             # remove old apk file
