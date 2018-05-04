@@ -37,6 +37,8 @@ class CCPluginDeploy(cocos.CCPlugin):
     def _add_custom_options(self, parser):
         parser.add_argument("-m", "--mode", dest="mode", default='debug',
                           help=MultiLanguage.get_string('DEPLOY_ARG_MODE'))
+        parser.add_argument("--instant-game", dest="instant_game", action="store_true",
+                          help=MultiLanguage.get_string('DEPLOY_ARG_INSTANT_GAME'))
 
     def _check_custom_options(self, args):
 
@@ -44,6 +46,7 @@ class CCPluginDeploy(cocos.CCPlugin):
             args.mode = 'debug'
 
         self._mode = 'debug'
+        self._instant_game = args.instant_game
         if 'release' == args.mode:
             self._mode = args.mode
 
@@ -183,6 +186,9 @@ class CCPluginDeploy(cocos.CCPlugin):
         adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
         self._run_cmd(adb_uninstall)
         adb_install = "%s install \"%s\"" % (adb_path, apk_path)
+        if self._instant_game:
+            # change the "adb_install" cmd as you like
+            pass
         self._run_cmd(adb_install)
 
     def get_filename_by_extention(self, ext, path):

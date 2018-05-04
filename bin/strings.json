@@ -43,6 +43,7 @@
         "PROJECT_WARNING_CUSTOM_STEP_FAILED_FMT" : "Custom step invoke failed: %s",
         "DEPLOY_BRIEF" : "Compile and deploy a project to a device/simulator.",
         "DEPLOY_ARG_MODE" : "Set the deploy mode, should be debug|release, default is debug.",
+        "DEPLOY_ARG_INSTANT_GAME" : "Indicate to deploy a Android Instant Game",
         "DEPLOY_ERROR_XAPCMD_NOT_FOUND" : "XapDeployCmd.exe not found, can't deploy the application.",
         "DEPLOY_INFO_FIND_XAP_FMT" : "Find xap deployment tools in registry : %s",
         "DEPLOY_INFO_INSTALLING_APK" : "Installing on device",
