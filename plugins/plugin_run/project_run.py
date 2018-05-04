@@ -42,6 +42,8 @@ class CCPluginRun(cocos.CCPlugin):
     def _add_custom_options(self, parser):
         parser.add_argument("-m", "--mode", dest="mode", default='debug',
                           help=MultiLanguage.get_string('RUN_ARG_MODE'))
+        parser.add_argument("--instant-game", dest="instant_game", action="store_true",
+                          help=MultiLanguage.get_string('RUN_ARG_INSTANT_GAME'))
 
         group = parser.add_argument_group(MultiLanguage.get_string('RUN_ARG_GROUP_WEB'))
         group.add_argument("-b", "--browser", dest="browser",
@@ -65,6 +67,7 @@ class CCPluginRun(cocos.CCPlugin):
         self._param = args.param
         self._no_console = args.no_console
         self._working_dir = args.working_dir
+        self._instant_game = args.instant_game
 
     def get_ios_sim_name(self):
         # get the version of xcodebuild
@@ -222,6 +225,9 @@ class CCPluginRun(cocos.CCPlugin):
         adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
         deploy_dep = dependencies['deploy']
         startapp = "%s shell am start -n \"%s/%s\"" % (adb_path, deploy_dep.package, deploy_dep.activity)
+        if self._instant_game:
+            # add the special cmd for instant game, for example [cmd += ' -workdir "%s"' % self._working_dir]
+            pass
         self._run_cmd(startapp)
         pass
 
