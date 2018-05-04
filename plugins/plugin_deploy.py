@@ -183,12 +183,14 @@ class CCPluginDeploy(cocos.CCPlugin):
         adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
 
         #TODO detect if the application is installed before running this
-        adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
-        self._run_cmd(adb_uninstall)
-        adb_install = "%s install \"%s\"" % (adb_path, apk_path)
         if self._instant_game:
-            # change the "adb_install" cmd as you like
-            pass
+            #TODO, add uninstall cmd if need
+            adb_uninstall = ""
+            adb_install = "%s install -multiple -r -t --instantapp \"%s\"" % (adb_path, apk_path)
+        else:
+            adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
+            adb_install = "%s install \"%s\"" % (adb_path, apk_path)
+        self._run_cmd(adb_uninstall)
         self._run_cmd(adb_install)
 
     def get_filename_by_extention(self, ext, path):
