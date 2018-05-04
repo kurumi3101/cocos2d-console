@@ -14,6 +14,8 @@ import json
 import re
 from xml.dom import minidom
 
+import utils
+
 import project_compile
 
 BUILD_CFIG_FILE="build-cfg.json"
@@ -553,7 +555,8 @@ class AndroidBuilder(object):
                     os.rename(os.path.join(output_dir, apk_name), apk_path)
                 else:
                     apk_path = os.path.join(output_dir, apk_name)
-
+                if instant_game:
+                    utils.un_zip(apk_path, output_dir)
                 return apk_path
             else:
                 raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_NOT_SPECIFY_OUTPUT'),

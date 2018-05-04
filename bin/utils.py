@@ -6,6 +6,7 @@ import sys
 import shutil
 import cocos
 import re
+import zipfile
 
 VS_VERSION_MAP = {
     2012 : "11.0",
@@ -246,6 +247,13 @@ def get_engine_version(engine_path):
         pass
 
     return ret
+
+def un_zip(file_name, output_dir):
+    """unzip zip file into output_dir"""
+    zip_file = zipfile.ZipFile(file_name)
+    for names in zip_file.namelist():
+        zip_file.extract(names, output_dir)  
+    zip_file.close()
 
 class ExtendEnv(object):
     extend_env = {}
