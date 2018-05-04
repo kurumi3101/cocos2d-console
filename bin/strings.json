@@ -140,6 +140,7 @@
         "COMPILE_ARG_CPPFLAGS" : "Specify the APP_CPPFLAGS of ndk-build.",
         "COMPILE_ARG_STUDIO" : "Use the Android Studio project for Android platform.",
         "COMPILE_ARG_NO_APK" : "Not generate the apk file.",
+        "COMPILE_ARG_INSTANT_GAME" : "indicate to compile a Instant Game project",
         "COMPILE_ARG_GROUP_WIN" : "Windows Options",
         "COMPILE_ARG_VS" : "Specify the Visual Studio version will be used. Such as: 2013. Default find available version automatically.",
         "COMPILE_ARG_GROUP_WEB" : "Web Options",

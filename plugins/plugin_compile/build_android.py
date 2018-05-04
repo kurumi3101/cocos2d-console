@@ -421,7 +421,7 @@ class AndroidBuilder(object):
         self._project.invoke_custom_step_script(cocos_project.Project.CUSTOM_STEP_POST_ANT_BUILD,
                                                 target_platform, args_ant_copy)
 
-    def gradle_build_apk(self, build_mode):
+    def gradle_build_apk(self, build_mode, instant_game):
         # check the compileSdkVersion & buildToolsVersion
         check_file = os.path.join(self.app_android_root, 'app', 'build.gradle')
         f = open(check_file)
@@ -468,10 +468,13 @@ class AndroidBuilder(object):
                                       cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
         mode_str = 'Debug' if build_mode == 'debug' else 'Release'
-        cmd = '"%s" --parallel --info assemble%s' % (gradle_path, mode_str)
+        cmd = '"%s" --parallel --info' % (gradle_path)
+        if instant_game:
+            cmd += ' :instantapp:'
+        cmd += 'assemble%s' % (mode_str)
         self._run_cmd(cmd, cwd=self.app_android_root)
 
-    def do_build_apk(self, build_mode, no_apk, output_dir, custom_step_args, compile_obj):
+    def do_build_apk(self, build_mode, no_apk, instant_game, output_dir, custom_step_args, compile_obj):
         if self.use_studio:
             assets_dir = os.path.join(self.app_android_root, "app", "assets")
             project_name = None
@@ -512,7 +515,7 @@ class AndroidBuilder(object):
 
             # build apk
             if self.use_studio:
-                self.gradle_build_apk(build_mode)
+                self.gradle_build_apk(build_mode, instant_game)
             else:
                 self.ant_build_apk(build_mode, custom_step_args)
 
