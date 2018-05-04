@@ -468,9 +468,9 @@ class AndroidBuilder(object):
                                       cocos.CCPluginError.ERROR_PATH_NOT_FOUND)
 
         mode_str = 'Debug' if build_mode == 'debug' else 'Release'
-        cmd = '"%s" --parallel --info' % (gradle_path)
+        cmd = '"%s" --parallel --info ' % (gradle_path)
         if instant_game:
-            cmd += ' :instantapp:'
+            cmd += ':instantapp:'
         cmd += 'assemble%s' % (mode_str)
         self._run_cmd(cmd, cwd=self.app_android_root)
 
