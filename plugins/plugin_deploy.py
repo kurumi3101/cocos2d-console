@@ -186,7 +186,7 @@ class CCPluginDeploy(cocos.CCPlugin):
         if self._instant_game:
             #TODO, add uninstall cmd if need
             adb_uninstall = ""
-            adb_install = "%s install -multiple -r -t --instantapp \"%s\"" % (adb_path, apk_path)
+            adb_install = "%s install-multiple -r -t --instantapp %s" % (adb_path, apk_path)
         else:
             adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
             adb_install = "%s install \"%s\"" % (adb_path, apk_path)

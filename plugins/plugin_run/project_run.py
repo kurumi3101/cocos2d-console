@@ -70,7 +70,9 @@ class CCPluginRun(cocos.CCPlugin):
         self._no_console = args.no_console
         self._working_dir = args.working_dir
         self._instant_game = args.instant_game
-        self._launch_url = args.launch_url
+        # TODO, change it for tmp test
+        # self._launch_url = args.launch_url
+        self._launch_url = "https://org.cocos2dx.helloworld/game"
 
     def get_ios_sim_name(self):
         # get the version of xcodebuild
