@@ -136,8 +136,7 @@ class CCPluginCompile(cocos.CCPlugin):
                                           MultiLanguage.get_string('COMPILE_ERROR_WRONG_NDK_MODE_FMT',
                                                                    available_ndk_modes))
         self._no_apk = args.no_apk
-        # TODO, set True only for test, it should be "self._instant_game = args.instant_game"
-        self._instant_game = True
+        self._instant_game = args.instant_game
 
         self.app_abi = None
         if args.app_abi:

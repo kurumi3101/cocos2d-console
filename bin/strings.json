@@ -55,7 +55,7 @@
         "RUN_ARG_NO_CONSOLE" : "Disable simulator console window (by passing command line arguments '-console no' to simulator) for Windows, Mac and Linux.",
         "RUN_ARG_WORKING_DIR" : "Specify simulator working directory for Windows, Mac and Linux (by passing command line arguments '-workdir \"<path>\"' to simulator).",
         "RUN_ARG_INSTANT_GAME" : "Indicate to run a Google Instant Game",
-        "RUN_ARG_LAUNCH_URL" : "Launch url for Google Instant Game",
+        "RUN_ARG_LAUNCH_URL" : "Launch url property for Google Instant Game",
         "RUN_ARG_PARAM" : "after Specify the browser to open the url, add the browser param.",
         "RUN_ARG_PORT" : "Set the port of the local web server, defualt is 8000",
         "RUN_ARG_HOST" : "Set the host of the local web server, defualt is 127.0.0.1",
