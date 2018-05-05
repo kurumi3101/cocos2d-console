@@ -82,6 +82,8 @@ class CCPluginCompile(cocos.CCPlugin):
                            help=MultiLanguage.get_string('COMPILE_ARG_STUDIO'))
         group.add_argument("--no-apk", dest="no_apk", action="store_true",
                            help=MultiLanguage.get_string('COMPILE_ARG_NO_APK'))
+        group.add_argument("--instant-game", dest="instant_game", action="store_true",
+                           help=MultiLanguage.get_string('COMPILE_ARG_INSTANT_GAME'))
 
         group = parser.add_argument_group(MultiLanguage.get_string('COMPILE_ARG_GROUP_WIN'))
         group.add_argument("--vs", dest="vs_version", type=int,
@@ -134,6 +136,7 @@ class CCPluginCompile(cocos.CCPlugin):
                                           MultiLanguage.get_string('COMPILE_ERROR_WRONG_NDK_MODE_FMT',
                                                                    available_ndk_modes))
         self._no_apk = args.no_apk
+        self._instant_game = args.instant_game
 
         self.app_abi = None
         if args.app_abi:
@@ -540,7 +543,7 @@ class CCPluginCompile(cocos.CCPlugin):
         # build apk
         if not self._no_apk:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_APK'))
-        self.apk_path = builder.do_build_apk(build_mode, self._no_apk, output_dir, self._custom_step_args, self)
+        self.apk_path = builder.do_build_apk(build_mode, self._no_apk, self._instant_game, output_dir, self._custom_step_args, self)
         self.android_package, self.android_activity = builder.get_apk_info()
 
         cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_SUCCEED'))

@@ -42,6 +42,10 @@ class CCPluginRun(cocos.CCPlugin):
     def _add_custom_options(self, parser):
         parser.add_argument("-m", "--mode", dest="mode", default='debug',
                           help=MultiLanguage.get_string('RUN_ARG_MODE'))
+        parser.add_argument("--instant-game", dest="instant_game", action="store_true",
+                          help=MultiLanguage.get_string('RUN_ARG_INSTANT_GAME'))
+        parser.add_argument("--launch-url", dest="launch_url", default='',
+                          help=MultiLanguage.get_string('RUN_ARG_LAUNCH_URL'))
 
         group = parser.add_argument_group(MultiLanguage.get_string('RUN_ARG_GROUP_WEB'))
         group.add_argument("-b", "--browser", dest="browser",
@@ -65,6 +69,8 @@ class CCPluginRun(cocos.CCPlugin):
         self._param = args.param
         self._no_console = args.no_console
         self._working_dir = args.working_dir
+        self._instant_game = args.instant_game
+        self._launch_url = args.launch_url
 
     def get_ios_sim_name(self):
         # get the version of xcodebuild
@@ -221,7 +227,10 @@ class CCPluginRun(cocos.CCPlugin):
         sdk_root = cocos.check_environment_variable('ANDROID_SDK_ROOT')
         adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
         deploy_dep = dependencies['deploy']
-        startapp = "%s shell am start -n \"%s/%s\"" % (adb_path, deploy_dep.package, deploy_dep.activity)
+        if self._instant_game:
+            startapp = "%s shell am start -a \"%s\" -c \"%s\" -d \"%s\"" % (adb_path, 'android.intent.action.VIEW', 'android.intent.category.BROWSABLE', self._launch_url)
+        else:
+            startapp = "%s shell am start -n \"%s/%s\"" % (adb_path, deploy_dep.package, deploy_dep.activity)
         self._run_cmd(startapp)
         pass
 

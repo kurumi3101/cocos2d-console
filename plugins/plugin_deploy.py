@@ -37,6 +37,8 @@ class CCPluginDeploy(cocos.CCPlugin):
     def _add_custom_options(self, parser):
         parser.add_argument("-m", "--mode", dest="mode", default='debug',
                           help=MultiLanguage.get_string('DEPLOY_ARG_MODE'))
+        parser.add_argument("--instant-game", dest="instant_game", action="store_true",
+                          help=MultiLanguage.get_string('DEPLOY_ARG_INSTANT_GAME'))
 
     def _check_custom_options(self, args):
 
@@ -44,6 +46,7 @@ class CCPluginDeploy(cocos.CCPlugin):
             args.mode = 'debug'
 
         self._mode = 'debug'
+        self._instant_game = args.instant_game
         if 'release' == args.mode:
             self._mode = args.mode
 
@@ -180,9 +183,14 @@ class CCPluginDeploy(cocos.CCPlugin):
         adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
 
         #TODO detect if the application is installed before running this
-        adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
+        if self._instant_game:
+            #TODO, add uninstall cmd if need
+            adb_uninstall = ""
+            adb_install = "%s install-multiple -r -t --instantapp %s" % (adb_path, apk_path)
+        else:
+            adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
+            adb_install = "%s install \"%s\"" % (adb_path, apk_path)
         self._run_cmd(adb_uninstall)
-        adb_install = "%s install \"%s\"" % (adb_path, apk_path)
         self._run_cmd(adb_install)
 
     def get_filename_by_extention(self, ext, path):
