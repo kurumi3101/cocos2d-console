@@ -55,7 +55,7 @@ class CCPluginDeploy(cocos.CCPlugin):
 
     def _get_install_target_sdk_version(self, adb_path):
         import subprocess
-        cmds = "%s shell getprop ro.build.version.sdk" % (adb_path)
+        cmds = [adb_path, 'shell', 'getprop', 'ro.build.version.sdk']
         child = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         out = child.stdout.read()
         child.wait()
