@@ -56,11 +56,17 @@ class CCPluginDeploy(cocos.CCPlugin):
     def _get_install_target_sdk_version(self, adb_path):
         import subprocess
         cmds = [adb_path, 'shell', 'getprop', 'ro.build.version.sdk']
+        
         child = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         out = child.stdout.read()
         child.wait()
         errCode = child.returncode
 
+        cocos.Logging.info("tmp log start in _get_install_target_sdk_version")
+        cocos.Logging.info(cmds)
+        cocos.Logging.info(errCode)
+        cocos.Logging.info(out)
+        cocos.Logging.info("tmp log end in _get_install_target_sdk_version")
         return (errCode, out)
 
     def deploy_ios(self, dependencies):
