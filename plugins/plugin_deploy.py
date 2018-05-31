@@ -201,7 +201,7 @@ class CCPluginDeploy(cocos.CCPlugin):
         #TODO detect if the application is installed before running this
         if self._instant_game:
             errCode, out = self._get_install_target_sdk_version(adb_path)
-            if errCode == 0 and out < 26:
+            if errCode == 0 and int(out) < 26:
                 instant_parameter = "--ephemeral"
             else:
                 instant_parameter = "--instantapp"
