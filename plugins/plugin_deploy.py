@@ -53,6 +53,16 @@ class CCPluginDeploy(cocos.CCPlugin):
     def _is_debug_mode(self):
         return self._mode == 'debug'
 
+    def _get_install_target_sdk_version(self, adb_path):
+        import subprocess
+        cmds = "%s shell getprop ro.build.version.sdk" % (adb_path)
+        child = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        out = child.stdout.read()
+        child.wait()
+        errCode = child.returncode
+
+        return (errCode, out)
+
     def deploy_ios(self, dependencies):
         if not self._platforms.is_ios_active():
             return
@@ -184,9 +194,14 @@ class CCPluginDeploy(cocos.CCPlugin):
 
         #TODO detect if the application is installed before running this
         if self._instant_game:
+            errCode, out = self._get_install_target_sdk_version(adb_path)
+            if errCode == 0 and out < 26:
+                instant_parameter = "--ephemeral"
+            else:
+                instant_parameter = "--instantapp"
             #TODO, add uninstall cmd if need
             adb_uninstall = ""
-            adb_install = "%s install-multiple -r -t --instantapp %s" % (adb_path, apk_path)
+            adb_install = "%s install-multiple -r -t %s %s" % (adb_path, instant_parameter, apk_path)
         else:
             adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
             adb_install = "%s install \"%s\"" % (adb_path, apk_path)
