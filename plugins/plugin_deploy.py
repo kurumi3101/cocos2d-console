@@ -62,11 +62,6 @@ class CCPluginDeploy(cocos.CCPlugin):
         child.wait()
         errCode = child.returncode
 
-        cocos.Logging.info("tmp log start in _get_install_target_sdk_version")
-        cocos.Logging.info(cmds)
-        cocos.Logging.info(errCode)
-        cocos.Logging.info(out)
-        cocos.Logging.info("tmp log end in _get_install_target_sdk_version")
         return (errCode, out)
 
     def deploy_ios(self, dependencies):
