@@ -741,11 +741,11 @@ class CCPluginCompile(cocos.CCPlugin):
                 "%s" % 'Debug' if self._mode == 'debug' else 'Release',
                 "-target",
                 "\"%s\"" % targetName,
-                "%s" % "-arch i386" if self.use_sdk == 'iphonesimulator' else '',
+                "%s" % "-arch x86_64" if self.use_sdk == 'iphonesimulator' else '',
                 "-sdk",
                 "%s" % self.use_sdk,
                 "CONFIGURATION_BUILD_DIR=\"%s\"" % (output_dir),
-                "%s" % "VALID_ARCHS=\"i386\"" if self.use_sdk == 'iphonesimulator' else ''
+                "%s" % "VALID_ARCHS=\"i386 x86_64\"" if self.use_sdk == 'iphonesimulator' else ''
                 ])
 
             if self._sign_id is not None:
