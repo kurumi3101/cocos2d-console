@@ -39,6 +39,8 @@ class CCPluginDeploy(cocos.CCPlugin):
                           help=MultiLanguage.get_string('DEPLOY_ARG_MODE'))
         parser.add_argument("--instant-game", dest="instant_game", action="store_true",
                           help=MultiLanguage.get_string('DEPLOY_ARG_INSTANT_GAME'))
+        parser.add_argument("--launch-url", dest="launch_url", default='',
+                          help=MultiLanguage.get_string('RUN_ARG_LAUNCH_URL'))
 
     def _check_custom_options(self, args):
 
@@ -47,6 +49,7 @@ class CCPluginDeploy(cocos.CCPlugin):
 
         self._mode = 'debug'
         self._instant_game = args.instant_game
+        self._launch_url = args.launch_url
         if 'release' == args.mode:
             self._mode = args.mode
 
@@ -191,19 +194,14 @@ class CCPluginDeploy(cocos.CCPlugin):
         self.activity = compile_dep.android_activity
         apk_path = compile_dep.apk_path
         sdk_root = cocos.check_environment_variable('ANDROID_SDK_ROOT')
-        adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
 
         #TODO detect if the application is installed before running this
         if self._instant_game:
-            errCode, out = self._get_install_target_sdk_version(adb_path)
-            if errCode == 0 and int(out) < 26:
-                instant_parameter = "--ephemeral"
-            else:
-                instant_parameter = "--instantapp"
-            #TODO, add uninstall cmd if need
+            ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'ia'))
             adb_uninstall = ""
-            adb_install = "%s install-multiple -r -t %s %s" % (adb_path, instant_parameter, apk_path)
+            adb_install = "%s run -u %s %s" % (ia_path, self._launch_url, apk_path)
         else:
+            adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
             adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
             adb_install = "%s install \"%s\"" % (adb_path, apk_path)
         self._run_cmd(adb_uninstall)
