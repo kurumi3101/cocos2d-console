@@ -39,6 +39,8 @@ class CCPluginDeploy(cocos.CCPlugin):
                           help=MultiLanguage.get_string('DEPLOY_ARG_MODE'))
         parser.add_argument("--instant-game", dest="instant_game", action="store_true",
                           help=MultiLanguage.get_string('DEPLOY_ARG_INSTANT_GAME'))
+        parser.add_argument("--launch-url", dest="launch_url", default='',
+                          help=MultiLanguage.get_string('RUN_ARG_LAUNCH_URL'))
 
     def _check_custom_options(self, args):
 
@@ -47,11 +49,23 @@ class CCPluginDeploy(cocos.CCPlugin):
 
         self._mode = 'debug'
         self._instant_game = args.instant_game
+        self._launch_url = args.launch_url
         if 'release' == args.mode:
             self._mode = args.mode
 
     def _is_debug_mode(self):
         return self._mode == 'debug'
+
+    def _get_install_target_sdk_version(self, adb_path):
+        import subprocess
+        cmds = [adb_path, 'shell', 'getprop', 'ro.build.version.sdk']
+        
+        child = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        out = child.stdout.read()
+        child.wait()
+        errCode = child.returncode
+
+        return (errCode, out)
 
     def deploy_ios(self, dependencies):
         if not self._platforms.is_ios_active():
@@ -180,14 +194,14 @@ class CCPluginDeploy(cocos.CCPlugin):
         self.activity = compile_dep.android_activity
         apk_path = compile_dep.apk_path
         sdk_root = cocos.check_environment_variable('ANDROID_SDK_ROOT')
-        adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
 
         #TODO detect if the application is installed before running this
         if self._instant_game:
-            #TODO, add uninstall cmd if need
+            ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'ia'))
             adb_uninstall = ""
-            adb_install = "%s install-multiple -r -t --instantapp %s" % (adb_path, apk_path)
+            adb_install = "%s run -u %s %s" % (ia_path, self._launch_url, apk_path)
         else:
+            adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
             adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
             adb_install = "%s install \"%s\"" % (adb_path, apk_path)
         self._run_cmd(adb_uninstall)

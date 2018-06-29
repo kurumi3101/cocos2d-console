@@ -558,10 +558,6 @@ class AndroidBuilder(object):
                     os.rename(os.path.join(output_dir, apk_name), apk_path)
                 else:
                     apk_path = os.path.join(output_dir, apk_name)
-                if instant_game:
-                    # multi app need be installed
-                    utils.un_zip(apk_path, output_dir)
-                    return os.path.join(output_dir, '*.apk')
                 return apk_path
             else:
                 raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_NOT_SPECIFY_OUTPUT'),
