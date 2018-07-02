@@ -197,9 +197,9 @@ class CCPluginDeploy(cocos.CCPlugin):
 
         #TODO detect if the application is installed before running this
         if self._instant_game:
-            ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'ia'))
+            ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'tools', 'ia.jar'))
             adb_uninstall = ""
-            adb_install = "%s run -u %s %s" % (ia_path, self._launch_url, apk_path)
+            adb_install = "java -jar %s run -u %s %s" % (ia_path, self._launch_url, apk_path)
         else:
             adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
             adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
