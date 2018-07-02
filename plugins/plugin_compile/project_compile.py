@@ -1141,12 +1141,6 @@ class CCPluginCompile(cocos.CCPlugin):
         if os.path.exists(outputJsPath) == True:
             os.remove(outputJsPath)
 
-
-        # call closure compiler
-        ant_root = cocos.check_environment_variable('ANT_ROOT')
-        ant_path = os.path.join(ant_root, 'ant')
-        self._run_cmd("%s -f %s" % (ant_path, os.path.join(publish_dir, 'build.xml')))
-
         # handle sourceMap
         sourceMapPath = os.path.join(publish_dir, "sourcemap")
         if os.path.exists(sourceMapPath):

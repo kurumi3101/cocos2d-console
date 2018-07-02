@@ -18,12 +18,6 @@ class Project(object):
 
     CUSTOM_STEP_PRE_BUILD        = "pre-build"
     CUSTOM_STEP_POST_BUILD       = "post-build"
-    CUSTOM_STEP_PRE_NDK_BUILD    = "pre-ndk-build"
-    CUSTOM_STEP_POST_NDK_BUILD   = "post-ndk-build"
-    CUSTOM_STEP_PRE_COPY_ASSETS  = "pre-copy-assets"
-    CUSTOM_STEP_POST_COPY_ASSETS = "post-copy-assets"
-    CUSTOM_STEP_PRE_ANT_BUILD    = "pre-ant-build"
-    CUSTOM_STEP_POST_ANT_BUILD   = "post-ant-build"
 
     @staticmethod
     def list_for_display():
