@@ -448,97 +448,21 @@ class CCPluginCompile(cocos.CCPlugin):
         if not self._platforms.is_android_active():
             return
 
-        project_dir = self._project.get_project_dir()
         build_mode = self._mode
         output_dir = self._output_dir
 
         # get the android project path
-        # if both proj.android & proj.android-studio existed, select the project path by --studio argument
-        # else, use the existed one.
         cfg_obj = self._platforms.get_current_config()
-        proj_android_path = cfg_obj.proj_path
-        proj_studio_path = cfg_obj.studio_path
-        project_android_dir = None
-        using_studio = False
-        if self.is_valid_path(proj_android_path) and self.is_valid_path(proj_studio_path):
-            if self.use_studio:
-                project_android_dir = proj_studio_path
-                using_studio = True
-            else:
-                project_android_dir = proj_android_path
-                using_studio = False
-        elif self.is_valid_path(proj_android_path):
-            project_android_dir = proj_android_path
-            using_studio = False
-        elif self.is_valid_path(proj_studio_path):
-            project_android_dir = proj_studio_path
-            using_studio = True
-
-        if using_studio:
-            ide_name = 'Android Studio'
-        else:
-            ide_name = 'Eclipse'
+        project_android_dir = cfg_obj.proj_path
+        ide_name = 'Android Studio'
         cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_ANDROID_PROJPATH_FMT', (ide_name, project_android_dir)))
 
         from build_android import AndroidBuilder
         builder = AndroidBuilder(self._verbose, project_android_dir,
-                                 self._no_res, self._project, using_studio)
-
-        args_ndk_copy = self._custom_step_args.copy()
-        target_platform = self._platforms.get_current_platform()
+                                 self._no_res, self._project)
 
         # update the project with the android platform
         builder.update_project(self._ap)
-
-        if not self._project._is_script_project() or self._project._is_native_support():
-            if self._ndk_mode != "none" and not using_studio:
-                # build native code
-                cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILD_NATIVE'))
-                ndk_build_param = [
-                    "-j%s" % self._jobs
-                ]
-
-                if self.app_abi:
-                    abi_param = "APP_ABI=\"%s\"" % self.app_abi
-                    ndk_build_param.append(abi_param)
-
-                if self.ndk_toolchain:
-                    toolchain_param = "NDK_TOOLCHAIN=%s" % self.ndk_toolchain
-                    ndk_build_param.append(toolchain_param)
-
-                self._project.invoke_custom_step_script(cocos_project.Project.CUSTOM_STEP_PRE_NDK_BUILD, target_platform, args_ndk_copy)
-
-                modify_mk = False
-                app_mk = os.path.join(project_android_dir, "jni/Application.mk")
-                mk_content = None
-                if self.cppflags and os.path.exists(app_mk):
-                    # record the content of Application.mk
-                    f = open(app_mk)
-                    mk_content = f.read()
-                    f.close()
-
-                    # Add cpp flags
-                    f = open(app_mk, "a")
-                    f.write("\nAPP_CPPFLAGS += %s" % self.cppflags)
-                    f.close()
-                    modify_mk = True
-
-                try:
-                    builder.do_ndk_build(ndk_build_param, self._ndk_mode, self)
-                except Exception as e:
-                    if e.__class__.__name__ == 'CCPluginError':
-                        raise e
-                    else:
-                        raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_NDK_BUILD_FAILED'),
-                                                  cocos.CCPluginError.ERROR_BUILD_FAILED)
-                finally:
-                    # roll-back the Application.mk
-                    if modify_mk:
-                        f = open(app_mk, "w")
-                        f.write(mk_content)
-                        f.close()
-
-                self._project.invoke_custom_step_script(cocos_project.Project.CUSTOM_STEP_POST_NDK_BUILD, target_platform, args_ndk_copy)
 
         # build apk
         if not self._no_apk:
@@ -1216,12 +1140,6 @@ class CCPluginCompile(cocos.CCPlugin):
         outputJsPath = os.path.join(publish_dir, buildOpt["outputFileName"])
         if os.path.exists(outputJsPath) == True:
             os.remove(outputJsPath)
-
-
-        # call closure compiler
-        ant_root = cocos.check_environment_variable('ANT_ROOT')
-        ant_path = os.path.join(ant_root, 'ant')
-        self._run_cmd("%s -f %s" % (ant_path, os.path.join(publish_dir, 'build.xml')))
 
         # handle sourceMap
         sourceMapPath = os.path.join(publish_dir, "sourcemap")
