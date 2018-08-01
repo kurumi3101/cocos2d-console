@@ -85,6 +85,9 @@ class CCPluginCompile(cocos.CCPlugin):
         group.add_argument("--instant-game", dest="instant_game", action="store_true",
                            help=MultiLanguage.get_string('COMPILE_ARG_INSTANT_GAME'))
 
+        group.add_argument("--xcworkspace", dest="xcworkspace", action="store_true",
+                           help=MultiLanguage.get_string('COMPILE_ARG_XCWORKSPACE'))
+
         group = parser.add_argument_group(MultiLanguage.get_string('COMPILE_ARG_GROUP_WIN'))
         group.add_argument("--vs", dest="vs_version", type=int,
                            help=MultiLanguage.get_string('COMPILE_ARG_VS'))
@@ -137,6 +140,8 @@ class CCPluginCompile(cocos.CCPlugin):
                                                                    available_ndk_modes))
         self._no_apk = args.no_apk
         self._instant_game = args.instant_game
+
+        self._xcworkspace = args.xcworkspace
 
         self.app_abi = None
         if args.app_abi:
@@ -582,7 +587,7 @@ class CCPluginCompile(cocos.CCPlugin):
         if not cocos.os_is_mac():
             raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_BUILD_ON_MAC'),
                                       cocos.CCPluginError.ERROR_WRONG_ARGS)
-        
+
         if self._sign_id is not None:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_IOS_SIGN_FMT', self._sign_id))
             self.use_sdk = 'iphoneos'
@@ -660,13 +665,17 @@ class CCPluginCompile(cocos.CCPlugin):
         try:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILDING'))
 
+            if self._xcworkspace:
+                p_name, p_project_name = self.checkFileByExtention(".xcworkspace", self._platforms.project_path())
+                projectPath = os.path.join(ios_project_dir, p_project_name)
+
             command = ' '.join([
                 "xcodebuild",
-                "-project",
+                "%s" % '-workspace' if self._xcworkspace else '-project',
                 "\"%s\"" % projectPath,
                 "-configuration",
                 "%s" % 'Debug' if self._mode == 'debug' else 'Release',
-                "-target",
+                "%s" % '-scheme' if self._xcworkspace else '-target',
                 "\"%s\"" % targetName,
                 "%s" % "-arch x86_64" if self.use_sdk == 'iphonesimulator' else '',
                 "-sdk",
@@ -797,13 +806,17 @@ class CCPluginCompile(cocos.CCPlugin):
         try:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_BUILDING'))
 
+            if self._xcworkspace:
+                p_name, p_project_name = self.checkFileByExtention(".xcworkspace", self._platforms.project_path())
+                projectPath = os.path.join(mac_project_dir, p_project_name)
+
             command = ' '.join([
                 "xcodebuild",
-                "-project",
+                "%s" % '-workspace' if self._xcworkspace else '-project',
                 "\"%s\"" % projectPath,
                 "-configuration",
                 "%s" % 'Debug' if self._mode == 'debug' else 'Release',
-                "-target",
+                "%s" % '-scheme' if self._xcworkspace else '-target',
                 "\"%s\"" % targetName,
                 "CONFIGURATION_BUILD_DIR=\"%s\"" % (output_dir)
                 ])
