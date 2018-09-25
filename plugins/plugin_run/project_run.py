@@ -79,9 +79,9 @@ class CCPluginRun(cocos.CCPlugin):
         ret = None
         if match:
             ver_num = int(match.group(1))
-            if ver_num <= 5:
+            if cocos.version_compare(ver_num, "<=", 5):
                 ret = "ios-sim-xcode5"
-            elif ver_num < 8:
+            elif cocos.version_compare(ver_num, "<=", 8):
                 ret = "ios-sim-xcode6"
 
         return ret
