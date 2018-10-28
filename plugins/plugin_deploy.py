@@ -195,16 +195,16 @@ class CCPluginDeploy(cocos.CCPlugin):
         apk_path = compile_dep.apk_path
         sdk_root = cocos.check_environment_variable('ANDROID_SDK_ROOT')
 
-        #TODO detect if the application is installed before running this
         if self._instant_game:
             ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'tools', 'ia.jar'))
-            adb_uninstall = ""
             adb_install = "java -jar %s run -u %s %s" % (ia_path, self._launch_url, apk_path)
         else:
             adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
-            adb_uninstall = "%s uninstall %s" % (adb_path, self.package)
-            adb_install = "%s install \"%s\"" % (adb_path, apk_path)
-        self._run_cmd(adb_uninstall)
+            # do uninstall only when that app is installed
+            if cocos.app_is_installed(adb_path, self.package):
+                adb_uninstall= "%s uninstall %s" % (adb_path, self.package)
+                self._run_cmd(adb_uninstall)
+            adb_install = "%s install -r \"%s\"" % (adb_path, apk_path)
         self._run_cmd(adb_install)
 
     def get_filename_by_extention(self, ext, path):
