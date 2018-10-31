@@ -390,6 +390,12 @@ class Templates(object):
 class TPCreator(object):
 
     def __init__(self, lang, cocos_root, project_name, project_dir, tp_name, tp_dir, project_package, mac_id, ios_id):
+        replace_cocos_root = cocos_root
+        if cocos.os_is_win32():
+            cocos_root = cocos_root.replace('\\', '/')
+        self.replace_pattern_str = {
+            'COCOS_ROOT_REPLACE': cocos_root
+        }
         self.lang = lang
         self.cocos_root = cocos_root
         self.project_dir = project_dir
@@ -750,8 +756,12 @@ class TPCreator(object):
                 cocos.Logging.warning(MultiLanguage.get_string('NEW_WARNING_NOT_A_FILE_FMT', modify_file))
                 continue
 
+
             pattern = modify_info["pattern"]
             replace_str = modify_info["replace_string"]
+            cocos.Logging.info(replace_str)
+            if replace_str in self.replace_pattern_str:
+                replace_str = self.replace_pattern_str[replace_str]
 
             f = open(modify_file)
             lines = f.readlines()
